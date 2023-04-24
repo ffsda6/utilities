@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import sys
@@ -10,12 +11,13 @@ except ImportError:
 
 
 def help():
-    print("Usage: python app.py data_file\n\n"
+    print("Usage: python app.py data_file [-c]\n\n"
           "data_file: The path to the JSON file containing the URI data.\n"
-          "           This argument is required.")
+          "           This argument is required.\n"
+          "-c:        Optional flag to output results to the console instead of a file.")
 
 
-if len(sys.argv) != 2:
+if len(sys.argv) < 2 or len(sys.argv) > 3:
     help()
     exit()
 
@@ -39,26 +41,41 @@ def is_valid_website(uri):
 
 
 if __name__ == '__main__':
-    data_file = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('data_file', help='The path to the JSON file containing the URI data.')
+    parser.add_argument('-c', '--console', action='store_true', help='Output results to the console instead of a file.')
+    args = parser.parse_args()
 
-    if not os.path.exists(data_file):
-        print(f"Error: {data_file} does not exist.")
+    if not os.path.exists(args.data_file):
+        print(f"Error: {args.data_file} does not exist.")
         help()
         exit()
 
-    with open(data_file, 'r') as f:
+    with open(args.data_file, 'r') as f:
         data = json.load(f)
 
-    with open('results.txt', 'w') as f:
+    if args.console:
         for item in data:
             if 'uri' in item:
                 uri = item['uri']
                 if 'androidapp' not in uri:
                     if is_valid_website(uri):
-                        f.write(f"{uri} is a valid website.\n")
+                        print(f"{uri} is a valid website.")
                     else:
-                        f.write(f"{uri} is not a valid website.\n")
+                        print(f"{uri} is not a valid website.")
                 else:
-                    f.write(f"{uri} contains 'androidapp' and has been excluded.\n")
+                    print(f"{uri} contains 'androidapp' and has been excluded.")
+    else:
+        with open('results.txt', 'w') as f:
+            for item in data:
+                if 'uri' in item:
+                    uri = item['uri']
+                    if 'androidapp' not in uri:
+                        if is_valid_website(uri):
+                            f.write(f"{uri} is a valid website.\n")
+                        else:
+                            f.write(f"{uri} is not a valid website.\n")
+                    else:
+                        f.write(f"{uri} contains 'androidapp' and has been excluded.\n")
 
-    print("Results have been saved to results.txt.")
+        print("Results have been saved to results.txt.")
