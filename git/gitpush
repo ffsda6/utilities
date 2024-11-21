@@ -1,0 +1,6 @@
+#!/bin/bash
+
+git push origin main
+
+[ $? -eq 0 ] && echo "git push successful"
+

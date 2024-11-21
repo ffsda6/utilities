@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[ ! $1 ] && echo "Please provide a comment" && exit 1
+
+git commit -am "$1"
+
+[ $? -eq 0 ] && echo "Commit successful"
+
