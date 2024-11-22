@@ -27,16 +27,6 @@ chmod 440 /etc/sudoers.d/bpainter
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
 
-# Add VSCode repository and key
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
-echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
-rm packages.microsoft.gpg
-
-# Add Bitwarden repository
-curl -fsSL https://packages.bitwarden.com/github/deb/pubkey.gpg | gpg --dearmor > /etc/apt/trusted.gpg.d/bitwarden.gpg
-echo "deb https://packages.bitwarden.com/github/deb/ stable main" > /etc/apt/sources.list.d/bitwarden.list
-
 # Update package lists and upgrade existing packages
 apt update
 apt upgrade -y
@@ -46,7 +36,8 @@ apt install -y \
     google-chrome-stable \
     xrdp \
     bitwarden \
-    code
+    code \
+    vim
 
 # Start and enable XRDP service
 systemctl enable xrdp
